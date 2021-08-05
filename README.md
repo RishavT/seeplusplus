@@ -6,6 +6,8 @@ Currently under development.
 
 ## Version 0.1.1 (pre-release) plan
 
+**EDIT**: Using the firebase database instead of Telegram
+
 Planned to support one way text-only sync from Android to Mac using the Telegram API.
 
 ### Android client
