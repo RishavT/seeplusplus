@@ -1,0 +1,18 @@
+{
+  "name": "See Plus Plus",
+  "short_name":"SeePlusPlus",
+  "description": "",
+  "icons": [
+  ],
+  "permissions":[
+  ],
+  "author": {
+    "name":"Rishav",
+    "wesbite":"https://github.com/rishavt"
+  },
+  "start_url": "/seeplusplus",
+  "display": "standalone",
+  "background_color":"#FFF",
+  "theme_color": "#FFF",
+  "orientation": "portrait"
+}
