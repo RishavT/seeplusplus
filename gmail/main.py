@@ -64,7 +64,7 @@ def main():
     otp = get_otp(message)
     if otp:
         copy_text(otp)
-        send_notification(f'Copyed otp {otp}')
+        send_notification(f'Copied otp {otp}')
 
 if __name__ == '__main__':
     main()
