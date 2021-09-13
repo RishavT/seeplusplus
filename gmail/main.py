@@ -48,6 +48,7 @@ def main():
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
+    send_notification('Looking for OTPs')
     service = build('gmail', 'v1', credentials=creds)
 
     # Call the Gmail API
@@ -67,4 +68,8 @@ def main():
         send_notification(f'Copied otp {otp}')
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        send_notification(str(e))
+
