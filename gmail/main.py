@@ -22,8 +22,7 @@ def get_otp(text):
     words = text.split()
     for w in words:
         try:
-            int(w)
-            return w
+            return str(int(w))
         except ValueError:
             pass
 
