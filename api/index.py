@@ -22,7 +22,7 @@ def load():
     data = read_data()
     return render_template('clipboard.html', text=data)
 
-@app.route('/', methods=['GET']):
+@app.route('/', methods=['GET'])
 def home():
     return load()
 
