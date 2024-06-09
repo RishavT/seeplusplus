@@ -2,48 +2,93 @@ from flask import Flask, render_template, request, jsonify, Response
 import json
 import os
 from functools import wraps
+from encrypt import encrypt, decrypt
 
-app = Flask(__name__, template_folder=os.path.join(os.getcwd(), 'templates'))
+app = Flask(__name__, template_folder=os.path.join(os.getcwd(), "templates"))
 
-INMEM_DB = ""
-USER = os.getenv("USER", "test")
-PASSWORD = os.getenv("PASSWORD", "test")
+INMEM_DB = {}
+SUPPORTED_USER_COUNT = 2
+USERS = [
+    {
+        "user": "test",
+        "password": "test",
+    }
+]
 
-def read_data():
-    return INMEM_DB
+for i in range(1, SUPPORTED_USER_COUNT + 1):
+    USERS.append({"user": os.getenv(f"USER{i}", f"test{i}"), "password": os.getenv(f"USER{i}", f"test{i}")})
 
-def write_data(data):
+
+def read_data(identity):
+    encrypted = INMEM_DB.get(identity["user"])
+
+    if not encrypted:
+        return ""
+
+    return decrypt(
+        enc_text=encrypted,
+        passphrase=identity["password"],
+    )
+
+
+def write_data(data, identity):
     global INMEM_DB
-    if data != INMEM_DB:
-        INMEM_DB = data
 
-def check_auth(username, password):
-    return username == USER and password == PASSWORD
+    if not data:
+        INMEM_DB[identity["user"]] = ""
+        return
 
-def authenticate():
+    encrypted = encrypt(
+        text=data,
+        passphrase=identity["password"],
+    )
+
+    INMEM_DB[identity["user"]] = encrypted
+
+def authenticate(logout=False):
+    if logout:
+        return Response(
+            response=render_template("logout.html"),
+            status=401
+        )
+
     return Response(
-        'Could not verify your access level for that URL.\n'
-        'You have to login with proper credentials', 401,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'})
+        "Could not verify your access level for that URL.\n"
+        "You have to login with proper credentials",
+        401,
+        {"WWW-Authenticate": 'Basic realm="Login Required"'},
+    )
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
 
-@app.route('/', methods=['GET'])
-@requires_auth
+def get_identity():
+    auth = request.authorization
+    for identity in USERS:
+        user = identity["user"]
+        password = identity["password"]
+        if auth and user == auth.username and password == auth.password:
+            return identity
+
+
+@app.route("/", methods=["GET"])
 def load():
-    data = read_data()
-    return render_template('clipboard.html', text=data)
+    identity = get_identity()
+    if not identity:
+        return authenticate()
 
-@app.route('/save', methods=['POST'])
-@requires_auth
+    data = read_data(identity=identity)
+    return render_template("clipboard.html", text=data, user=identity["user"])
+
+
+@app.route("/save", methods=["POST"])
 def save():
-    data = request.form.get('text', '')
-    write_data(data)
-    return jsonify({'status': 'success'})
+    identity = get_identity()
+    if not identity:
+        return authenticate()
+
+    data = request.form.get("text", "")
+    write_data(data, identity=identity)
+    return jsonify({"status": "success"})
+
+@app.route("/logout")
+def logout():
+    return authenticate(logout=True)
