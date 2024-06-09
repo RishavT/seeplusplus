@@ -10,14 +10,14 @@ A simple Flask app with a full-screen text area and floating buttons.
    cd your-repo-name
    ```
 
-2. Install the dependencies:
+2. Install vercel:
    ```sh
-   pip install -r requirements.txt
+   npm i -g vercel
    ```
 
 3. Run the application:
    ```sh
-   python app.py
+   vercel dev
    ```
 
 ## Deploy to Vercel
