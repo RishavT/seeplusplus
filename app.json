@@ -1,0 +1,24 @@
+{
+  "name": "Flask Clipboard App",
+  "description": "A simple Flask app with a full-screen text area and floating buttons.",
+  "repository": "https://github.com/your-username/your-repo-name",
+  "scripts": {
+    "postdeploy": "python app.py"
+  },
+  "env": {
+    "FLASK_ENV": {
+      "description": "The environment in which to run the Flask app.",
+      "value": "production"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
