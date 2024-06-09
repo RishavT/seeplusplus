@@ -16,7 +16,7 @@ USERS = [
 ]
 
 for i in range(1, SUPPORTED_USER_COUNT + 1):
-    USERS.append({"user": os.getenv(f"USER{i}", f"test{i}"), "password": os.getenv(f"USER{i}", f"test{i}")})
+    USERS.append({"user": os.getenv(f"USER{i}", f"test{i}"), "password": os.getenv(f"PASSWORD{i}", f"test{i}")})
 
 
 def read_data(identity):
