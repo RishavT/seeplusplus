@@ -4,20 +4,18 @@ import os
 from functools import wraps
 
 app = Flask(__name__, template_folder=os.path.join(os.getcwd(), 'templates'))
-DATABASE_FILE = 'database.json'
+
+INMEM_DB = ""
 USER = os.getenv("USER", "test")
 PASSWORD = os.getenv("PASSWORD", "test")
 
 def read_data():
-    try:
-        with open(DATABASE_FILE, 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return ""
+    return INMEM_DB
 
 def write_data(data):
-    with open(DATABASE_FILE, 'w') as f:
-        json.dump(data, f)
+    global INMEM_DB
+    if data != INMEM_DB:
+        INMEM_DB = data
 
 def check_auth(username, password):
     return username == USER and password == PASSWORD
